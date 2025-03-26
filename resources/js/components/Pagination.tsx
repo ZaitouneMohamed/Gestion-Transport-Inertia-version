@@ -179,7 +179,7 @@ const Pagination: React.FC<PaginationProps> = ({ links, from, to, total, current
     );
 
     return (
-        <div className="px-6 py-4 border-t dark:border-gray-700">
+        <div className="px-6 py-4 border-t dark:border-gray-700 bg-gray-700">
             <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
                 {/* Results Counter */}
                 <div className="text-sm text-gray-700 dark:text-gray-300">

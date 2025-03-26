@@ -2,13 +2,35 @@
 
 namespace App\Models;
 
-class Driver extends InertiaBaseModel
+use App\Traits\Searchable;
+use Illuminate\Database\Eloquent\Model;
+
+class Driver extends Model
 {
+    use Searchable;
     protected $table = "chaufeurs";
+    protected $fillable = ['full_name', "phone", "code", "numero_2", "adresse", "cnss", 'email', "cni", "status"];
 
-    protected $fillable = ['full_name',"phone","code","numero_2","adresse","cnss",'email',"cni","status"];
+    /**
+     * Get the searchable fields
+     */
+    public function getSearchableFields(): array
+    {
+        return [
+            'full_name',
+            'code',
+        ];
+    }
 
-    protected $searchFillables = ['full_name','phone','email','code','cni'];
+    /**
+     * Get relations to load with search
+     */
+    public function getSearchRelations(): array
+    {
+        return [
+            // your relations like 'trucks', 'stations', etc...
+        ];
+    }
 
     public function scopeActive($query)
     {

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Driver\DriverResource;
 use App\Models\Driver;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -15,35 +16,6 @@ abstract class InertiaBaseController extends Controller
     protected $folderPath;
     protected $routeName;
     protected $resourceClass;
-    public function index(Request $request)
-    {
-        // Get a new instance of the model
-        //$modelInstance = new $this->model();
-
-        // Start with a base query
-        $query = $this->model::query();
-
-        // Apply filters
-        $query->filter([
-            'search' => $request->search
-        ]);
-
-        // Pass filters to the view
-        $filters = [
-            'search' => $request->search
-        ];
-
-        // Get paginated and sorted results
-        $data = $query->latest()->paginate(15)->withQueryString();
-
-
-        // Get paginated and sorted results
-        $data = $query->latest()->paginate(10)->withQueryString();
-        return Inertia::render($this->folderPath . '/Index' , [
-            "data" => $this->resourceClass::collection($data),
-            "filters" => $filters
-        ]);
-    }
 
     public function create()
     {
@@ -56,7 +28,7 @@ abstract class InertiaBaseController extends Controller
         $validatedData = $request->validate((new $this->storeRequestClass)->rules());
         $this->model::create($validatedData);
         return redirect()->route($this->routeName)
-        ->with('success', 'Data created successfully.');
+            ->with('success', 'Data created successfully.');
     }
 
     public function show($id)
@@ -71,10 +43,9 @@ abstract class InertiaBaseController extends Controller
 
     public function edit($id)
     {
-        return Inertia::render($this->folderPath.'/Edit', [
+        return Inertia::render($this->folderPath . '/Edit', [
             'item' => new $this->resourceClass($this->model::findOrFail($id))
         ]);
-
     }
 
 
@@ -87,7 +58,7 @@ abstract class InertiaBaseController extends Controller
         $item->update($validatedData);
         //
         return redirect()->route($this->routeName)
-                ->with('success', 'Data Updated successfully.');
+            ->with('success', 'Data Updated successfully.');
     }
 
     public function destroy($id)
@@ -96,7 +67,7 @@ abstract class InertiaBaseController extends Controller
         $item->delete();
 
         return redirect()->route($this->routeName)
-        ->with('success', 'Data deleted successfully.');
+            ->with('success', 'Data deleted successfully.');
     }
 
     protected function validateRequest(Request $request, $requestClass)
@@ -105,7 +76,7 @@ abstract class InertiaBaseController extends Controller
         return $requestInstance->validate();
     }
 
-    public function sendResponse($result , $message)
+    public function sendResponse($result, $message)
     {
         $response = [
             'success' => true,
@@ -124,10 +95,33 @@ abstract class InertiaBaseController extends Controller
             'code'    => $code,
         ];
 
-        if ( ! empty($errorMessages)) {
+        if (! empty($errorMessages)) {
             $response['data'] = $errorMessages;
         }
 
         return response()->json($response, $code);
+    }
+
+    protected function getIndexQuery()
+    {
+        $query = $this->model::query();
+
+        if (request()->has('search')) {
+            $query->search(request('search'));
+        }
+
+        return $query;
+    }
+
+    public function index()
+    {
+        $items = $this->getIndexQuery()
+            ->paginate(request('per_page', 10))
+            ->withQueryString();
+
+        return inertia($this->folderPath . '/Index', [
+            'data' => DriverResource::collection($items),
+            'filters' => request()->all(['search', 'per_page'])
+        ]);
     }
 }
