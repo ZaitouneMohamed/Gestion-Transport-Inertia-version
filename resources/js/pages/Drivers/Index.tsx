@@ -1,14 +1,15 @@
 import { Head, Link, router } from '@inertiajs/react';
 import DashboardLayout from '@/layouts/app-layout';
 import DeleteButton from '@/components/DeleteButton';
+import debounce from 'lodash/debounce';
+import Pagination from '@/components/Pagination';
+
 import {
     Search,
     FilePlus,
     FileDown,
     Edit2,
 } from 'lucide-react';
-import debounce from 'lodash/debounce';
-import Pagination from '@/components/Pagination';
 
 export default function Index({ data , filters }) {
 

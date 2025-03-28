@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Traits\Searchable;
 use Illuminate\Database\Eloquent\Model;
 
 class Station extends InertiaBaseModel
 {
+    use Searchable;
     protected $table = "stations";
 
     protected $fillable = [
@@ -17,6 +19,19 @@ class Station extends InertiaBaseModel
         "gerant_rep_phone",
         "ville"
     ];
+
+    public function getSearchableFields(): array
+    {
+        return [
+            'name',
+        ];
+    }
+    public function getSearchRelations(): array
+    {
+        return [
+            // your relations like 'trucks', 'stations', etc...
+        ];
+    }
 
     protected $searchFillables = ['name'];
 }

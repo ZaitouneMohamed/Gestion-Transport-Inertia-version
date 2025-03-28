@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import DashboardLayout from '@/layouts/app-layout';
-import DeleteButton from '@/Components/DeleteButton';
+import DeleteButton from '@/components/DeleteButton';
+import debounce from 'lodash/debounce';
+import Pagination from '@/components/Pagination';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from 'react';
+
 import {
     Search,
-    FilePlus,
     FileDown,
     Edit2,
     Loader2,
@@ -15,12 +18,11 @@ import {
     PlusCircle,
     Eye
 } from 'lucide-react';
-import debounce from 'lodash/debounce';
-import Pagination from '@/Components/Pagination';
-import { motion, AnimatePresence } from 'framer-motion';
 
 
 export default function Index({ data, filters }) {
+    console.log(data.data);
+
     const [isLoading, setIsLoading] = useState(false);
 
     const handleSearch = debounce((value) => {

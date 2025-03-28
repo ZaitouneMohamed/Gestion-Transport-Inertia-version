@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Traits\Searchable;
 use Illuminate\Database\Eloquent\Model;
 
-class Driver extends Model
+class Driver extends InertiaBaseModel
 {
     use Searchable;
     protected $table = "chaufeurs";
@@ -19,6 +19,7 @@ class Driver extends Model
         return [
             'full_name',
             'code',
+            "phone"
         ];
     }
 

@@ -141,6 +141,24 @@ const EditBonModal = ({ isOpen, onClose, bon }) => {
                                             <p className="mt-1 text-sm text-red-600">{errors.prix}</p>
                                         )}
                                     </div>
+                                      {/* Price */}
+                                      <div>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                            KM
+                                        </label>
+                                        <input
+                                            type="number"
+                                            step="0.01"
+                                            value={data.km}
+                                            onChange={e => setData('km', e.target.value)}
+                                            className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600
+                                                    shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700
+                                                    dark:text-white text-sm"
+                                        />
+                                        {errors.km && (
+                                            <p className="mt-1 text-sm text-red-600">{errors.km}</p>
+                                        )}
+                                    </div>
                                 </div>
 
                                 {/* Description */}

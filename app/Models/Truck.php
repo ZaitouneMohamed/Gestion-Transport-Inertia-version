@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Traits\Searchable;
 
 class Truck extends InertiaBaseModel
 {
+    use Searchable;
     protected $table = "camions";
     protected $fillable = [
         "matricule",
@@ -20,8 +21,18 @@ class Truck extends InertiaBaseModel
         "consommation"
     ];
 
-    protected $searchFillables = ['matricule'];
-
+    public function getSearchableFields(): array
+    {
+        return [
+            'matricule',
+        ];
+    }
+    public function getSearchRelations(): array
+    {
+        return [
+            // your relations like 'trucks', 'stations', etc...
+        ];
+    }
     public function scopeActive($query)
     {
         return $query->where("statue", 1);

@@ -1,27 +1,26 @@
 import React from 'react';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, Link } from '@inertiajs/react';
 import DashboardLayout from '@/layouts/app-layout';
 import { ChevronLeft } from 'lucide-react';
-import { Link } from '@inertiajs/react';
 
-export default function Create() {
-    const { data, setData, post, processing, errors } = useForm({
-        full_name: '',
-        email: '',
-        phone: '',
-        code: '',
-        cni: '',
-        cnss: '',
+export default function Edit({ item }) {
+    const { data, setData, put, processing, errors } = useForm({
+        full_name: item.full_name,
+        email: item.email || '',
+        phone: item.phone,
+        code: item.code,
+        cni: item.cni || '',
+        cnss: item.cnss || '',
     });
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        post(route('drivers.store'));
+        put(route('drivers.update', item.id));
     };
 
     return (
         <DashboardLayout>
-            <Head title="Add Driver" />
+            <Head title="Edit Driver" />
 
             <div className="p-6 dark:bg-gray-900">
                 <div className="max-w-3xl mx-auto">
@@ -39,7 +38,7 @@ export default function Create() {
                                     </Link>
                                 </div>
                                 <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
-                                    Add New Driver
+                                    Edit Driver: {item.full_name}
                                 </h2>
                             </div>
 
@@ -48,18 +47,16 @@ export default function Create() {
                                 {/* Full Name */}
                                 <div>
                                     <label htmlFor="full_name" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                        Full Name
+                                        Full Name <span className="text-red-500">*</span>
                                     </label>
                                     <input
                                         type="text"
                                         id="full_name"
-                                        placeholder='full name'
                                         value={data.full_name}
                                         onChange={e => setData('full_name', e.target.value)}
                                         className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600
                                                  shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700
                                                  dark:text-white text-sm"
-                                        required
                                     />
                                     {errors.full_name && (
                                         <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.full_name}</p>
@@ -74,7 +71,6 @@ export default function Create() {
                                     <input
                                         type="email"
                                         id="email"
-                                        placeholder='email'
                                         value={data.email}
                                         onChange={e => setData('email', e.target.value)}
                                         className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600
@@ -89,13 +85,11 @@ export default function Create() {
                                 {/* Phone */}
                                 <div>
                                     <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                        Phone
+                                        Phone <span className="text-red-500">*</span>
                                     </label>
                                     <input
                                         type="tel"
                                         id="phone"
-                                        required
-                                        placeholder='phone'
                                         value={data.phone}
                                         onChange={e => setData('phone', e.target.value)}
                                         className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600
@@ -110,14 +104,12 @@ export default function Create() {
                                 {/* Code */}
                                 <div>
                                     <label htmlFor="code" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                        Code
+                                        Code <span className="text-red-500">*</span>
                                     </label>
                                     <input
                                         type="text"
                                         id="code"
-                                        placeholder='code'
                                         value={data.code}
-                                        required
                                         onChange={e => setData('code', e.target.value)}
                                         className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600
                                                  shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700
@@ -139,7 +131,6 @@ export default function Create() {
                                             type="text"
                                             id="cni"
                                             value={data.cni}
-                                            placeholder='cni'
                                             onChange={e => setData('cni', e.target.value)}
                                             className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600
                                                      shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700
@@ -157,7 +148,6 @@ export default function Create() {
                                         </label>
                                         <input
                                             type="text"
-                                            placeholder='cnss'
                                             id="cnss"
                                             value={data.cnss}
                                             onChange={e => setData('cnss', e.target.value)}
@@ -170,6 +160,7 @@ export default function Create() {
                                         )}
                                     </div>
                                 </div>
+
 
                                 {/* Form Actions */}
                                 <div className="flex items-center justify-end space-x-3 border-t dark:border-gray-700 pt-6">
@@ -190,7 +181,7 @@ export default function Create() {
                                                  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
                                                  disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
-                                        {processing ? 'Saving...' : 'Save Driver'}
+                                        {processing ? 'Saving...' : 'Update Driver'}
                                     </button>
                                 </div>
                             </form>

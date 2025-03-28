@@ -5,21 +5,21 @@ import { ChevronLeft } from 'lucide-react';
 import { Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 
-export default function Create({ drivers, trucks , consumption }) {
+export default function Create({ drivers, trucks , item }) {
 
     const { data, setData, put, processing, errors } = useForm({
-        driver_id: consumption.chaufeur_id,
-        truck_id: consumption.camion_id,
-        ville: consumption.ville,
-        date: consumption.date,
-        description: consumption.description,
-        nbmagasin:consumption.n_magasin,
-        kmproposer: consumption.km_proposer
+        driver_id: item.chaufeur_id,
+        truck_id: item.camion_id,
+        ville: item.ville,
+        date: item.date,
+        description: item.description,
+        nbmagasin:item.n_magasin,
+        kmproposer: item.km_proposer
     });
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        put(route('consumption.update' , consumption.id));
+        put(route('consumption.update' , item.id));
     };
 
     // Helper functions for form elements
@@ -46,7 +46,7 @@ export default function Create({ drivers, trucks , consumption }) {
 
     return (
         <DashboardLayout>
-            <Head title="Add Consumption" />
+            <Head title="Edit Consumption" />
 
             <div className="p-4 dark:bg-gray-900">
                 <div className="max-w-3xl mx-auto">

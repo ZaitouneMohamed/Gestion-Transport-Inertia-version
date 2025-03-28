@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\Searchable;
 use Illuminate\Database\Eloquent\Model;
 use App\Services\ConsumptionCalculatorService;
 
-class Consumption extends Model
+class Consumption extends InertiaBaseModel
 {
+    use Searchable;
     protected $table = "consomations";
 
     protected $fillable = [
@@ -31,6 +33,19 @@ class Consumption extends Model
     public function Bons()
     {
         return $this->hasMany(Bon::class , "consomation_id");
+    }
+
+    public function getSearchableFields(): array
+    {
+        return [
+            'name',
+        ];
+    }
+    public function getSearchRelations(): array
+    {
+        return [
+            // your relations like 'trucks', 'stations', etc...
+        ];
     }
 
 

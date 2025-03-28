@@ -2,66 +2,17 @@
 
 namespace App\Http\Controllers\Dashboard;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\InertiaBaseController;
+use App\Http\Requests\Facture\StoreFactureRequest;
+use App\Http\Resources\Facture\FactureResource;
 use App\Models\Facture;
-use Illuminate\Http\Request;
-use Inertia\Inertia;
 
-class FactureController extends Controller
+class FactureController extends InertiaBaseController
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
+    protected $model = Facture::class;
+    protected $resourceClass = FactureResource::class;
+    protected $storeRequestClass = StoreFactureRequest::class;
+    protected $folderPath = 'Factures';
+    protected $routeName = 'factures.index';
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Facture $facture)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Facture $facture)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Facture $facture)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Facture $facture)
-    {
-        //
-    }
 }

@@ -7,13 +7,14 @@ import {
     FileDown,
     Edit2,
 } from 'lucide-react';
-//import debounce from 'lodash/debounce';
+import debounce from 'lodash/debounce';
 import Pagination from '@/components/Pagination';
 
-export default function Index({ data }) {
-    /*const handleSearch = debounce((value) => {
+export default function Index({ data , filters }) {
+
+    const handleSearch = debounce((value) => {
         router.get(
-            route('drivers.index'),
+            route('trucks.index'),
             { search: value },
             {
                 preserveState: true,
@@ -21,11 +22,11 @@ export default function Index({ data }) {
                 replace: true,
             }
         );
-    }, 300);*/
+    }, 300);
 
     return (
         <DashboardLayout>
-            <Head title="Drivers" />
+            <Head title="TRucks" />
 
             <div className="p-6 dark:bg-black-900">
                 <div className="max-w-7xl mx-auto">
@@ -58,9 +59,9 @@ export default function Index({ data }) {
                                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                                     <input
                                         type="text"
-                                        placeholder="Search by name or email..."
-                                        //defaultValue={filters.search}
-                                       // onChange={(e) => handleSearch(e.target.value)}
+                                        placeholder="Search by Matricule"
+                                        defaultValue={filters.search}
+                                        onChange={(e) => handleSearch(e.target.value)}
                                         className="pl-10 pr-4 py-2 w-full border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
                                     />
                                 </div>

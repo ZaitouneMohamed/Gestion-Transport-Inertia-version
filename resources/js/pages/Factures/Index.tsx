@@ -1,22 +1,22 @@
 import React from 'react';
 import { Head, Link, useForm, router } from '@inertiajs/react';
 import DashboardLayout from '@/layouts/app-layout';
-import DeleteButton from '@/Components/DeleteButton';
+import DeleteButton from '@/components/DeleteButton';
+import debounce from 'lodash/debounce';
+import Pagination from '@/components/Pagination';
 import {
     Search,
     FilePlus,
     FileDown,
     Edit2,
 } from 'lucide-react';
-import debounce from 'lodash/debounce';
-import Pagination from '@/Components/Pagination';
 
-export default function Index({ drivers, filters }) {
+export default function Index({ data, filters }) {
     const { delete: destroy } = useForm();
 
     const handleSearch = debounce((value) => {
         router.get(
-            route('drivers.index'),
+            route('factures.index'),
             { search: value },
             {
                 preserveState: true,
@@ -26,15 +26,12 @@ export default function Index({ drivers, filters }) {
         );
     }, 300);
 
-    const handleDelete = (id) => {
-        if (confirm('Are you sure you want to delete this driver?')) {
-            destroy(route('drivers.destroy', id));
-        }
-    };
+    const headerValues = ["date" , "N° bon" , "station" , "prix" , "action"];
+
 
     return (
         <DashboardLayout>
-            <Head title="Drivers" />
+            <Head title="Factures" />
 
             <div className="p-6 dark:bg-gray-900">
                 <div className="max-w-7xl mx-auto">
@@ -42,14 +39,14 @@ export default function Index({ drivers, filters }) {
                         <div className="p-6">
                             {/* Header with Buttons */}
                             <div className="flex flex-col sm:flex-row justify-between items-center mb-6 space-y-4 sm:space-y-0">
-                                <h2 className="text-2xl font-semibold dark:text-white">Drivers List</h2>
+                                <h2 className="text-2xl font-semibold dark:text-white">Factures List</h2>
                                 <div className="flex space-x-4">
                                     <Link
-                                        href={route('drivers.create')}
+                                        href={route('factures.create')}
                                         className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                                     >
                                         <FilePlus className="w-4 h-4 mr-2" />
-                                        Add Driver
+                                        Add Facture
                                     </Link>
                                     <Link
                                         className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
@@ -79,87 +76,49 @@ export default function Index({ drivers, filters }) {
                                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                     <thead className="bg-gray-50 dark:bg-gray-700">
                                         <tr>
+                                        {headerValues.map((item) => (
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                Full Name
+                                                {item}
                                             </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                Phone
-                                            </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                Code
-                                            </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                Email
-                                            </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                CNI
-                                            </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                CNSS
-                                            </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                Status
-                                            </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                Actions
-                                            </th>
+                                            ))}
                                         </tr>
                                     </thead>
                                     <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                        {drivers.data.map((driver) => (
-                                            <tr key={driver.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                                        {data.data.map((item) => (
+                                            <tr key={item.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                                                        {driver.full_name}
+                                                        {item.date}
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="text-sm text-gray-900 dark:text-gray-100">
-                                                        {driver.phone}
+                                                        {item.bon}
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                                        {item.stationName}
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="text-sm text-gray-900 dark:text-gray-100">
-                                                        {driver.code}
+                                                        {item.prix}
                                                     </div>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <div className="text-sm text-gray-900 dark:text-gray-100">
-                                                        {driver.email}
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <div className="text-sm text-gray-900 dark:text-gray-100">
-                                                        {driver.cni}
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <div className="text-sm text-gray-900 dark:text-gray-100">
-                                                        {driver.cnss}
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                                        driver.status === 'active'
-                                                            ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                                                            : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-                                                    }`}>
-                                                        {driver.status}
-                                                    </span>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                                     <div className="flex space-x-3">
                                                         <Link
-                                                            href={route('drivers.edit', driver.id)}
+                                                            href={route('factures.edit', item.id)}
                                                             className="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300 transition-colors"
                                                         >
                                                             <Edit2 className="w-4 h-4" />
                                                         </Link>
                                                         <DeleteButton
-                                                            id={driver.id}
-                                                            name={driver.full_name}
-                                                            deleteUrl={route('drivers.destroy', driver.id)}
-                                                            resourceName="driver"
+                                                            id={item.id}
+                                                            name={item.bon}
+                                                            deleteUrl={route('factures.destroy', item.id)}
+                                                            resourceName="facture"
                                                         />
 
                                                     </div>
@@ -171,11 +130,11 @@ export default function Index({ drivers, filters }) {
 
                                 {/* Pagination Component */}
                                 <Pagination
-                                    links={drivers.links}
-                                    from={drivers.from}
-                                    to={drivers.to}
-                                    total={drivers.total}
-                                    currentPage={drivers.current_page}
+                                    links={data.links}
+                                    from={data.from}
+                                    to={data.to}
+                                    total={data.total}
+                                    currentPage={data.current_page}
                                 />
                             </div>
                         </div>

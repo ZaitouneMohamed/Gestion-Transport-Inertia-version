@@ -1,4 +1,4 @@
-import {React , useState} from 'react';
+import { useState} from 'react';
 import { motion } from 'framer-motion';
 import { Head } from '@inertiajs/react';
 import DashboardLayout from '@/layouts/app-layout';
@@ -16,15 +16,23 @@ import {
     CheckCircle2,
     XCircle,
     Backpack,
-    MoveLeft
+    MoveLeft,
+    Truck,
+    CreditCard,
+    PlusCircle
 } from 'lucide-react';
 import EditBonModal from './EditButtonModel';
+import DeleteButton from '@/components/DeleteButton';
+import AddBonModal from './AddBonModel';
 
-const ConsumptionDetails = ({ consumption }) => {
-    const newconsumption = consumption['data'];
+const ConsumptionDetails = ({ item }) => {
+    const newconsumption = item['data'];
     // In your main component
 const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 const [selectedBon, setSelectedBon] = useState(null);
+
+const [AddModalOpen , setAddModalOpen] = useState(false);
+
     const StatusBadge = ({ value, threshold }) => {
         let icon, color, text;
 
@@ -111,7 +119,7 @@ const [selectedBon, setSelectedBon] = useState(null);
                     <DataCard
                         title="Truck"
                         value={newconsumption.truckmatricule}
-                        icon={Car}
+                        icon={Truck}
                     />
                     <DataCard
                         title="Location"
@@ -216,130 +224,141 @@ const [selectedBon, setSelectedBon] = useState(null);
                         </p>
                     </motion.div>
                 )}
-            </div>
             {/* Bons Section */}
-{newconsumption.bons && newconsumption.bons.length > 0 && (
-    <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.4 }}
-        className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm"
-    >
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
-            <Backpack className="w-5 h-5" />
-            Bons List
-        </h3>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {newconsumption.bons.map((bon) => (
+            {newconsumption.bons && newconsumption.bons.length > 0 && (
                 <motion.div
-                    key={bon.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    whileHover={{ scale: 1.02 }}
-                    className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-sm"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                    className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm"
                 >
-                    {/* Bon Header */}
-                    <div className="flex justify-between items-start mb-4">
-                        <div>
-                            <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
-                                Bon #{bon.numero_bon}
-                            </h4>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
-                                {new Date(bon.date).toLocaleDateString()}
-                            </p>
-                        </div>
-                        <span className={`px-2 py-1 text-xs rounded-full ${
-                            bon.nature === 'gazole'
-                                ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300'
-                                : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
-                        }`}>
-                            {bon.nature}
-                        </span>
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                        <Backpack className="w-5 h-5" />
+                        Bons List {newconsumption.bons_count}
+                    </h3>
+                    <motion.button
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    onClick={() => {
+                                        setAddModalOpen(true);
+                                    }}
+                                    className="inline-flex items-center px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20
+                                            text-blue-600 dark:text-blue-400 rounded-md
+                                            hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-all duration-200
+                                            group"
+                                >
+                                    <PlusCircle className="w-4 h-4 mr-2 group-hover:rotate-12 transition-transform duration-200" />
+                                    <span className="font-medium">Add Bon </span>
+                                </motion.button>
+
                     </div>
 
-                    {/* Bon Details */}
-                    <div className="space-y-2 mb-4">
-                        <div className="flex justify-between">
-                            <span className="text-sm text-gray-500 dark:text-gray-400">Quantity</span>
-                            <span className="text-sm font-medium text-gray-900 dark:text-white">
-                                {bon.qte_litre} L
-                            </span>
-                        </div>
-                        <div className="flex justify-between">
-                            <span className="text-sm text-gray-500 dark:text-gray-400">Price</span>
-                            <span className="text-sm font-medium text-gray-900 dark:text-white">
-                                {bon.prix} DH
-                            </span>
-                        </div>
-                        <div className="flex justify-between">
-                            <span className="text-sm text-gray-500 dark:text-gray-400">KM</span>
-                            <span className="text-sm font-medium text-gray-900 dark:text-white">
-                                {bon.km} km
-                            </span>
-                        </div>
-                        <div className="flex justify-between">
-                            <span className="text-sm text-gray-500 dark:text-gray-400">Station</span>
-                            <span className="text-sm font-medium text-gray-900 dark:text-white">
-                            {bon.station?.name || 'N/A'}
-                            </span>
-                        </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {newconsumption.bons.map((bon) => (
+                            <motion.div
+                                key={bon.id}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+
+                                whileHover={{ scale: 1.02 }}
+                                className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-sm"
+                            >
+                                {/* Bon Header */}
+                                <div className="flex justify-between items-start mb-4">
+                                    <div>
+                                        <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
+                                            Bon #{bon.numero_bon}
+                                        </h4>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                                            {new Date(bon.date).toLocaleDateString()}
+                                        </p>
+                                    </div>
+                                    <span className={`px-2 py-1 text-xs rounded-full ${
+                                        bon.nature === 'gazole'
+                                            ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300'
+                                            : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
+                                    }`}>
+                                        {bon.nature}
+                                    </span>
+                                </div>
+
+                                {/* Bon Details */}
+                                <div className="space-y-2 mb-4">
+                                    <div className="flex justify-between">
+                                        <span className="text-sm text-gray-500 dark:text-gray-400">Quantity</span>
+                                        <span className="text-sm font-medium text-gray-900 dark:text-white">
+                                            {bon.qte_litre} L
+                                        </span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="text-sm text-gray-500 dark:text-gray-400">Price</span>
+                                        <span className="text-sm font-medium text-gray-900 dark:text-white">
+                                            {bon.prix} DH
+                                        </span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="text-sm text-gray-500 dark:text-gray-400">KM</span>
+                                        <span className="text-sm font-medium text-gray-900 dark:text-white">
+                                            {bon.km} km
+                                        </span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="text-sm text-gray-500 dark:text-gray-400">Station</span>
+                                        <span className="text-sm font-medium text-gray-900 dark:text-white">
+                                        {bon.station?.name || 'N/A'}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* Action Buttons */}
+                                <div className="flex justify-end space-x-3 pt-3 border-t border-gray-200 dark:border-gray-600">
+                                <motion.button
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    onClick={() => {
+                                        setSelectedBon(bon);
+                                        setIsEditModalOpen(true);
+                                    }}
+                                    className="inline-flex items-center px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20
+                                            text-blue-600 dark:text-blue-400 rounded-md
+                                            hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-all duration-200
+                                            group"
+                                >
+                                    <Edit2 className="w-4 h-4 mr-2 group-hover:rotate-12 transition-transform duration-200" />
+                                </motion.button>
+                                <DeleteButton
+                                                        id={bon.id}
+                                                        name={bon.id}
+                                                        deleteUrl={route('bons.destroy', bon.id)}
+                                                        resourceName="bon"
+                                    />
+                            </div>
+                            </motion.div>
+                        ))}
                     </div>
-
-                    {/* Action Buttons */}
-                    <div className="flex justify-end space-x-3 pt-3 border-t border-gray-200 dark:border-gray-600">
-    <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={() => {
-            setSelectedBon(bon);
-            setIsEditModalOpen(true);
-        }}
-        className="inline-flex items-center px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20
-                 text-blue-600 dark:text-blue-400 rounded-md
-                 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-all duration-200
-                 group"
-    >
-        <Edit2 className="w-4 h-4 mr-2 group-hover:rotate-12 transition-transform duration-200" />
-        <span className="font-medium">Edit</span>
-    </motion.button>
-
-    <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={() => {
-            if (confirm('Are you sure you want to delete this bon?')) {
-                router.delete(route('bons.destroy', bon.id), {
-                    preserveScroll: true
-                });
-            }
-        }}
-        className="inline-flex items-center px-3 py-1.5 bg-red-50 dark:bg-red-900/20
-                 text-red-600 dark:text-red-400 rounded-md
-                 hover:bg-red-100 dark:hover:bg-red-900/30 transition-all duration-200
-                 group"
-    >
-        <Trash2 className="w-4 h-4 mr-2 group-hover:rotate-12 transition-transform duration-200" />
-        <span className="font-medium">Delete</span>
-    </motion.button>
-</div>
-{/* Add the modal component */}
-
                 </motion.div>
-            ))}
-        </div>
-    </motion.div>
-)}
-<EditBonModal
-    isOpen={isEditModalOpen}
-    onClose={() => {
-        setIsEditModalOpen(false);
-        setSelectedBon(null);
-    }}
-    bon={selectedBon}
-/>
-        </DashboardLayout>
-    );
-};
+            )}
+            </div>
+            <EditBonModal
+                isOpen={isEditModalOpen}
+                onClose={() => {
+                    setIsEditModalOpen(false);
+                    setSelectedBon(null);
+                }}
+                bon={selectedBon}
+            />
+            <AddBonModal
+                isOpen={AddModalOpen}
+                onClose={() => {
+                    setAddModalOpen(false);
+                }}
+
+            />
+                    </DashboardLayout>
+                );
+            };
 
 export default ConsumptionDetails;

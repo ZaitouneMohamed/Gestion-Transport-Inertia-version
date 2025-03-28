@@ -14,24 +14,41 @@ trait Searchable
      */
     abstract public function getSearchRelations(): array;
 
-    /**
-     * Enhanced search scope that handles field-specific filtering
-     */
-    public function scopeSearch($query, $filters)
+    private function searchByMultiColumnsWithOneValue($query , $filters)
     {
-        if (empty($filters)) {
-            return $query;
-        }
-
         return $query->where(function ($query) use ($filters) {
-            foreach ($filters as $field => $value) {
-                // Only apply filter if field is searchable and value is not empty
-                if (in_array($field, $this->getSearchableFields()) && !empty($value)) {
-                    $query->where($field, 'LIKE', "%{$value}%");
+            foreach ($this->getSearchableFields() as $field) {
+                if (!empty($filters)) {
+                    $query->orWhere($field, 'LIKE', "%{$filters}%");
                 }
             }
         })->with($this->getSearchRelations());
+
     }
+
+    private function searchByOneRequiredColumn($query, $filters , $searchby)
+    {
+        return $query->where(function ($query) use ($filters, $searchby) {
+            $query->where($searchby , 'LIKE',"%{$filters}%");
+        })->with($this->getSearchRelations());
+    }
+
+
+    //////////////////////
+    public function scopeSearch($query, $filters ,$searchby)
+    {
+        if (!empty($filters) ) {
+            if (empty($searchby)) {
+                return $this->searchByMultiColumnsWithOneValue($query , $filters);
+            }else {
+                return $this->searchByOneRequiredColumn($query , $filters , $searchby);
+            }
+        }
+        else {
+            return $query;
+        }
+    }
+
 
     /**
      * Get available filters with their labels

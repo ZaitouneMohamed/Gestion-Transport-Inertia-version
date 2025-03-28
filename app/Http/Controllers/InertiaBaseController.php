@@ -17,6 +17,33 @@ abstract class InertiaBaseController extends Controller
     protected $routeName;
     protected $resourceClass;
 
+    protected function getIndexQuery()
+    {
+        $query = $this->model::query();
+
+        if (!request('search')) {
+            $query->search(null , null , request()->all());
+        }else {
+            $query->search(request('search') , request('searchby') , null);
+        }
+
+
+        return $query;
+    }
+
+    public function index()
+    {
+        $items = $this->getIndexQuery()
+            ->latest()
+            ->paginate(request('per_page', 10))
+            ->withQueryString();
+
+        return inertia($this->folderPath . '/Index', [
+            'data' => $this->resourceClass::collection($items),
+            'filters' => request()->all(['search', 'per_page'])
+        ]);
+    }
+
     public function create()
     {
         return Inertia::render($this->folderPath . "/Create");
@@ -27,17 +54,23 @@ abstract class InertiaBaseController extends Controller
         // Validate using the request class directly
         $validatedData = $request->validate((new $this->storeRequestClass)->rules());
         $this->model::create($validatedData);
-        return redirect()->route($this->routeName)
-            ->with('success', 'Data created successfully.');
+        if ($this->routeName) {
+            return redirect()->route($this->routeName)
+                ->with('success', 'Data created successfully.');
+        }
+        return redirect()->back()
+            ->with('success', 'Data Updated successfully.');
+
     }
 
     public function show($id)
     {
         try {
-            $item = $this->model::findOrFail($id);
-            return response()->json(["data" => $item], 200);
+            return Inertia::render($this->folderPath . '/Show', [
+                'item' => new $this->resourceClass($this->model::findOrFail($id))
+            ]);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['message' => 'Vagon not found'], 404);
+            return response()->json(['error' => 'data not found'], 404);
         }
     }
 
@@ -57,7 +90,11 @@ abstract class InertiaBaseController extends Controller
         //
         $item->update($validatedData);
         //
-        return redirect()->route($this->routeName)
+        if ($this->routeName) {
+            return redirect()->route($this->routeName)
+            ->with('success', 'Data Updated successfully.');
+        }
+        return redirect()->back()
             ->with('success', 'Data Updated successfully.');
     }
 
@@ -66,8 +103,12 @@ abstract class InertiaBaseController extends Controller
         $item = $this->model::findOrFail($id);
         $item->delete();
 
-        return redirect()->route($this->routeName)
+        if ($this->routeName) {
+            return redirect()->route($this->routeName)
             ->with('success', 'Data deleted successfully.');
+        }
+        return redirect()->back()
+            ->with('success', 'Data deletedp successfully.');
     }
 
     protected function validateRequest(Request $request, $requestClass)
@@ -100,28 +141,5 @@ abstract class InertiaBaseController extends Controller
         }
 
         return response()->json($response, $code);
-    }
-
-    protected function getIndexQuery()
-    {
-        $query = $this->model::query();
-
-        if (request()->has('search')) {
-            $query->search(request('search'));
-        }
-
-        return $query;
-    }
-
-    public function index()
-    {
-        $items = $this->getIndexQuery()
-            ->paginate(request('per_page', 10))
-            ->withQueryString();
-
-        return inertia($this->folderPath . '/Index', [
-            'data' => DriverResource::collection($items),
-            'filters' => request()->all(['search', 'per_page'])
-        ]);
     }
 }

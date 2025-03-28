@@ -32,6 +32,8 @@ const dropdownItems = [
         icon: BusFront,
         children: [
             { title: 'Consumptions', url: route('consumption.index')},
+            { title: 'Factures', url: route('factures.index')},
+            { title: 'Reparations', url: route('reparations.index')},
         ]
     },
     // Add more dropdown items as needed

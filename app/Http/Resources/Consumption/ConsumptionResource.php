@@ -21,13 +21,10 @@ class ConsumptionResource extends JsonResource
             'description' => $this->description,
             'status' => $this->status,
             'date' => $this->date,
-
-
             // Relationships
             "drivername" => $this->driver->full_name,
             "truckmatricule" => $this->truck->matricule,
             "truckconsomation" => $this->truck->consommation,
-
             'consumption_data' => [
                 'qty_litre' => $this->when(isset($this->qty_littre),
                     fn() => round($this->qty_littre, 2)
@@ -52,9 +49,8 @@ class ConsumptionResource extends JsonResource
                     ),
                 ]
             ],
-            'bons_count' => $this->whenLoaded('Bons', fn() => $this->Bons->count()),
-
-            'bons' => BonResource::collection($this->whenLoaded('Bons')),
+            'bons_count' => $this->Bons->count(),
+            'bons' => BonResource::collection($this->Bons),
             // Timestamps
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),

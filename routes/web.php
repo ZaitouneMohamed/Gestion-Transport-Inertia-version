@@ -1,7 +1,10 @@
 <?php
 
+use App\Http\Controllers\Dashboard\BonController;
 use App\Http\Controllers\Dashboard\ConsumptionController;
 use App\Http\Controllers\Dashboard\DriverController;
+use App\Http\Controllers\Dashboard\FactureController;
+use App\Http\Controllers\Dashboard\ReparationController;
 use App\Http\Controllers\Dashboard\SearchController;
 use App\Http\Controllers\Dashboard\StationController;
 use App\Http\Controllers\Dashboard\TruckController;
@@ -24,7 +27,9 @@ Route::middleware('auth')->prefix("dashboard")->group(function () {
     Route::resource('stations', StationController::class);
     //
     Route::resource('consumption', ConsumptionController::class);
-
+    Route::resource('factures', FactureController::class);
+    Route::resource('bons', BonController::class);
+    Route::resource('reparations', ReparationController::class);
 
     Route::controller(SearchController::class)->name("search.")->prefix("search")->group(function() {
         Route::get('bonsSearch' , "bonsSearch")->name('bons');

@@ -1,4 +1,3 @@
-import React from 'react';
 import { router } from '@inertiajs/react';
 import { Trash2 } from 'lucide-react';
 import Swal from 'sweetalert2';
