@@ -41,10 +41,10 @@ class ConsumptionResource extends JsonResource
                 ),
                 'full_prix' => round($this->full_prix, 2),
                 'status' => [
-                    'gazole' => $this->when(isset($this->km_proposer , $this->km_total),
+                    'mission' => $this->when(isset($this->km_proposer , $this->km_total),
                         fn() => round($this->km_proposer - $this->km_total,  2)
                     ),
-                    'mission' => $this->when(isset($this->statue),
+                    'gazole' => $this->when(isset($this->statue),
                         fn() => round($this->statue, 2)
                     ),
                 ]

@@ -21,7 +21,6 @@ import {
 
 
 export default function Index({ data, filters }) {
-    console.log(data.data);
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -56,8 +55,32 @@ export default function Index({ data, filters }) {
         );
     };
 
+    function checkStatusToShowData ( status , showingData){
+        if (status === 0) {
+            return "-"
+        }else {
+            return StatusBadge(status , showingData)
+        }
+    };
+
+    function statusGazoleBadge(value) {
+        let color = value > 0 ? "bg-green-100 text-green-800 dark:bg-green-800/20 dark:text-green-400" : "bg-red-100 text-red-800 dark:bg-red-800/20 dark:text-red-400";
+
+        return <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${color}`}>
+                {value}
+            </span>
+    }
+
+    function statusMissionBadge(value) {
+        let color = value < 0 ? "bg-green-100 text-green-800 dark:bg-green-800/20 dark:text-green-400" : "bg-red-100 text-red-800 dark:bg-red-800/20 dark:text-red-400";
+
+        return <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${color}`}>
+                {value}
+            </span>
+    }
+
     // Status badge component
-    const StatusBadge = ({ status }) => {
+    function StatusBadge ( status , showingData) {
         let icon, color, text;
 
         switch(status) {
@@ -69,7 +92,7 @@ export default function Index({ data, filters }) {
             case 1:
                 icon = <CheckCircle2 className="w-4 h-4 mr-1" />;
                 color = 'bg-green-100 text-green-800 dark:bg-green-800/20 dark:text-green-400';
-                text = 'Completed';
+                text = showingData;
                 break;
             default:
                 icon = <XCircle className="w-4 h-4 mr-1" />;
@@ -318,22 +341,22 @@ export default function Index({ data, filters }) {
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="text-sm text-gray-900 dark:text-gray-100">
-                                                        {item.consumption_data.qty_litre}
+                                                        {item.status == 1 ? item.consumption_data.qty_litre : ""}
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="text-sm text-gray-900 dark:text-gray-100">
-                                                        {item.consumption_data.km_total}
+                                                        { item.status == 1 ? item.consumption_data.km_total : "-"}
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="text-sm text-gray-900 dark:text-gray-100">
-                                                        {item.consumption_data.km_proposer}
+                                                        {item.status == 1 ? item.consumption_data.km_proposer : "-"}
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="text-sm text-gray-900 dark:text-gray-100">
-                                                        {item.consumption_data.taux}
+                                                        {item.status == 1 ? item.consumption_data.taux : "-"}
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
@@ -343,17 +366,17 @@ export default function Index({ data, filters }) {
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="text-sm text-gray-900 dark:text-gray-100">
-                                                        {item.consumption_data.status.mission}
+                                                        {item.status == 1 ?  statusGazoleBadge(item.consumption_data.status.gazole) : "-"}
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="text-sm text-gray-900 dark:text-gray-100">
-                                                        {item.consumption_data.status.gazole}
+                                                        {item.status == 1 ? statusMissionBadge(item.consumption_data.status.mission) : "-"}
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="text-sm text-gray-900 dark:text-gray-100">
-                                                        {item.consumption_data.prix}
+                                                        { item.status == 1 ? item.consumption_data.prix : "-"}
                                                     </div>
                                                 </td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -383,6 +406,7 @@ export default function Index({ data, filters }) {
                                     </tbody>
                                 </table>
 
+                            </div>
                                 <div className="p-4 border-t dark:border-gray-700">
                                     <Pagination
                                         links={data.meta.links}
@@ -392,7 +416,6 @@ export default function Index({ data, filters }) {
                                         currentPage={data.meta.current_page}
                                     />
                                 </div>
-                            </div>
                         </div>
                     </div>
                 </div>
